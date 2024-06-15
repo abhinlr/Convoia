@@ -10,7 +10,7 @@ export class MessageService {
   constructor(private socket: Socket) { }
 
   setup(authToken: string): void {
-    this.socket = io(environment.chatUrl, {
+    this.socket = io('', {
       path: '/chat/',
       reconnection: true,
       autoConnect: false,

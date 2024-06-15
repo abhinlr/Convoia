@@ -1,6 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-import http from 'http'; // Import http module
+import http from 'http';
 import { Server as SocketIOServer } from 'socket.io';
 import logger from './utils/logger.js';
 
@@ -11,10 +11,11 @@ app.set('port', port);
 
 const server = express();
 
-server.use(app);
 server.use(cors({
     origin: 'http://localhost:4200'
 }));
+
+server.use(app);
 
 const httpServer = http.createServer(server); // Create HTTP server
 const io = new SocketIOServer(httpServer); // Create Socket.IO server

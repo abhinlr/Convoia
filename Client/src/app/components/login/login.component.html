@@ -609,27 +609,34 @@
                             <h5>Login to continue...</h5>
                         </div>
                         <div class="card-body">
-                            <form [formGroup]="loginForm" (ngSubmit)="login()">
+                            <form [formGroup]="loginForm" (ngSubmit)="createOtp()" *ngIf="!otpGenerated">
                                 <div class="mb-3">
                                     <label for="phoneNumber" class="form-label">Phone Number</label>
                                     <input id="phoneNumber" formControlName="phoneNumber" type="text"
                                            class="form-control" placeholder="Enter your phone number"/>
                                     <div *ngIf="loginForm.get('phoneNumber')?.invalid && loginForm.get('phoneNumber')?.touched"
                                          class="text-danger mt-1">
-                                        Phone number is required and must be 10 digits.
-                                    </div>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="otp" class="form-label">OTP</label>
-                                    <input id="otp" formControlName="otp" type="text" class="form-control"
-                                           placeholder="Enter OTP"/>
-                                    <div *ngIf="loginForm.get('otp')?.invalid && loginForm.get('otp')?.touched"
-                                         class="text-danger mt-1">
-                                        OTP is required and must be 6 digits.
+                                        <span>Phone number is required and must be 10 digits.</span>
                                     </div>
                                 </div>
                                 <div class="d-grid">
                                     <button type="submit" class="btn btn-primary" [disabled]="loginForm.invalid">
+                                        Send OTP
+                                    </button>
+                                </div>
+                            </form>
+                            <form [formGroup]="otpForm" (ngSubmit)="login()" *ngIf="otpGenerated">
+                                <div class="mb-3">
+                                    <label for="otp" class="form-label">OTP</label>
+                                    <input id="otp" formControlName="otp" type="text" class="form-control"
+                                           placeholder="Enter OTP"/>
+                                    <div *ngIf="otpForm.get('otp')?.invalid && otpForm.get('otp')?.touched"
+                                         class="text-danger mt-1">
+                                        <span>OTP is required and must be 6 digits.</span>
+                                    </div>
+                                </div>
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-primary" [disabled]="otpForm.invalid">
                                         Login
                                     </button>
                                 </div>
