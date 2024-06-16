@@ -1,29 +1,24 @@
-import redis from 'redis';
+const Redis = require('ioredis');
+const logger = require('./logger');
 
-import logger from "../utils/logger.js";
+module.exports = function () {
+    const redis = new Redis({
+        host: process.env.REDIS_HOST || '127.0.0.1',
+        port: process.env.REDIS_PORT || 6379,
+        password: process.env.REDIS_PASSWORD || undefined,
+        db: process.env.REDIS_DB || 0});
 
-let redisClient;
-let {REDIS_HOST:host,REDIS_PORT:port,REDIS_PASS:password} = process.env;
-port = Number(port);
+    redis.on('connect', () => {
+        logger.info('Redis connected');
+    });
 
-export async function initializeRedisClient() {
-    if (host && port && password) {
-        redisClient = redis.createClient({ password, socket:{ host, port} }).on("error", (e) => {
-            logger.error(`Failed to create the Redis client with error:${e}`);
-        });
-        try {
-            await redisClient.connect();
-            logger.info(`Connected to Redis successfully!`);
-        } catch (e) {
-            logger.error(`Connection to Redis failed with error:${e}`);
-        }
-    }
-}
+    redis.on('error', (err) => {
+        logger.error('Redis connection error:', err);
+        process.exit(1);
+    });
 
-export function getRedisClient() {
-    if (!redisClient) {
-        throw new Error('Redis client has not been initialized.');
-    }
-    return redisClient;
-}
-export default {initializeRedisClient,getRedisClient};
+    redis.on('end', () => {
+        logger.info('Redis disconnected');
+    });
+    return redis;
+};
